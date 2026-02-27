@@ -19,5 +19,7 @@ RUN apt-get update && \
 # Set up working directory for SPRIGHT
 WORKDIR /mydata/spright
 
+# add entrypoint commands during setup
+
 # Keep the container running
 CMD ["bash", "-c", "while true; do sleep 30; done;"]

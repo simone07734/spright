@@ -1,0 +1,12 @@
+# model after sigcomm-experiment\expt-1-online-boutique\manifests\kubernetes\adservice.yaml
+# most important is DNS
+# apiVersion: v1
+# kind: Service
+# metadata:
+#  name: spright-service
+# spec:
+#  selector:
+#    app: spright
+#  ports:
+#  - port: 8083
+#    targetPort: 8083
