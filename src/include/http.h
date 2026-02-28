@@ -21,6 +21,7 @@
 
 #include <rte_eal.h>
 #include <stdint.h>
+#include <stdbool.h>
 
 #define HTTP_MSG_LENGTH_HEADER_MAX (1U << 10)
 #define HTTP_MSG_LENGTH_BODY_MAX (1U << 10)

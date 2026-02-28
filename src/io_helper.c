@@ -33,6 +33,7 @@
 #include <rte_mempool.h>
 
 #include "io.h"
+#include <assert.h>
 
 #define BACKLOG (1U << 16)
 #define MAX_RETRIES 5

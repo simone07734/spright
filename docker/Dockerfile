@@ -8,10 +8,13 @@ RUN DEBIAN_FRONTEND=noninteractive \
 # Install any necessary dependencies
 RUN apt-get update && \
     apt-get install -y \
+    build-essential \
     libelf-dev \
     libpcap-dev \
     libnuma-dev \
     libconfig-dev \
+    libbpf-dev \
+    uuid-dev \
     dpdk-dev \
     pkg-config \
     iproute2 \
