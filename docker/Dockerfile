@@ -14,12 +14,21 @@ RUN apt-get update && \
     libconfig-dev \
     dpdk-dev \
     pkg-config \
-    iproute2
+    iproute2 \
+    gettext-base
 
 # Set up working directory for SPRIGHT
 WORKDIR /mydata/spright
 
-# add entrypoint commands during setup
+# Copy SPRIGHT source into container
+COPY . /mydata/spright
 
-# Keep the container running
-CMD ["bash", "-c", "while true; do sleep 30; done;"]
+# Build SPRIGHT
+RUN make clean || true
+RUN make -j$(nproc)
+
+# Copy entrypoint (script that starts shm_mgr, gateway, and functions)
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
