@@ -14,11 +14,16 @@ RUN apt-get update && \
     libnuma-dev \
     libconfig-dev \
     libbpf-dev \
+    libdpdk-dev \
+    conntrack \
     uuid-dev \
     dpdk-dev \
     pkg-config \
     iproute2 \
-    gettext-base
+    gettext-base \
+    clang \
+    llvm \
+    make
 
 # Set up working directory for SPRIGHT
 WORKDIR /mydata/spright
