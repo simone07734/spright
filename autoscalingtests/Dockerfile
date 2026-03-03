@@ -35,8 +35,9 @@ WORKDIR /mydata/spright
 COPY . /mydata/spright
 
 # run setup script to install libbpf, dpdk, setup hugepages, and build spright
-RUN chmod +x env-setup.sh
-RUN env-setup.sh
+COPY env-setup.sh /mydata/spright
+RUN chmod +x /mydata/spright/env-setup.sh && \
+    /mydata/spright/env-setup.sh
 
 # Build SPRIGHT
 # RUN make clean || true
