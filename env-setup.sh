@@ -11,9 +11,9 @@ cd libbpf
 git switch --detach v0.6.0
 cd src
 make -j $(nproc)
-sudo make install
-echo "/usr/lib64/" | sudo tee -a /etc/ld.so.conf
-sudo ldconfig
+make install
+echo "/usr/lib64/" | tee -a /etc/ld.so.conf
+ldconfig
 cd ../..
 
 echo "Installing DPDK"
@@ -25,12 +25,12 @@ git switch --detach v21.11
 meson build
 cd build
 ninja
-sudo ninja install
-sudo ldconfig
+ninja install
+ldconfig
 cd ../..
 
 echo "Set up hugepages"
-sudo sysctl -w vm.nr_hugepages=16384
+sysctl -w vm.nr_hugepages=16384
 
 echo "build SPRIGHT"
 cd /mydata # Use the extended disk with enough space

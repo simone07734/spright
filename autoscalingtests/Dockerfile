@@ -24,7 +24,8 @@ RUN apt-get update && \
     gcc-multilib \
     uuid-dev \
     sysstat \
-    conntrack
+    conntrack \
+    git
 
 RUN pip3 install meson ninja
 
@@ -32,7 +33,9 @@ RUN pip3 install meson ninja
 WORKDIR /mydata/spright
 
 # Copy SPRIGHT source into container
-COPY . /mydata/spright
+COPY . /mydata/spright/
+
+RUN ls
 
 # run setup script to install libbpf, dpdk, setup hugepages, and build spright
 COPY env-setup.sh /mydata/spright
