@@ -24,27 +24,31 @@ do
 done
 
 
-echo "Testing S-SPRIGHT with motion detection dataset..."
-tmux send-keys -t 1 "sudo ./run.sh shm_mgr cfg/motion-detection.cfg" Enter
+echo "Testing S-SPRIGHT with dummy network functions..."
+tmux send-keys -t 1 "sudo ./run.sh shm_mgr cfg/example.cfg" Enter
 sleep 1
 tmux send-keys -t 2 "sudo ./run.sh gateway" Enter
 sleep 10
 tmux send-keys -t 3 "sudo ./run.sh nf 1" Enter
 sleep 1
 tmux send-keys -t 4 "sudo ./run.sh nf 2" Enter
+sleep 1
+tmux send-keys -t 5 "sudo ./run.sh nf 3" Enter
+sleep 1
+tmux send-keys -t 6 "sudo ./run.sh nf 4" Enter
 
 sleep 0.1
 
 echo "Starting CPU usage collection..."
 cd /mydata
 
-if [ ! -d "motion-detection-results/" ] ; then
-    echo "motion-detection-results/ DOES NOT exists."
-    mkdir motion-detection-results/
+if [ ! -d "dummy-test-results/" ] ; then
+    echo "dummy-test-results/ DOES NOT exists."
+    mkdir dummy-test-results/
 fi
 
-cd motion-detection-results
+cd dummy-test-results
 
-pidstat 1 3600 -G ^gateway_sk_msg$ > skmsg_gw.motion.cpu & pidstat 1 3600 -G ^nf_sk_msg$ > skmsg_fn.motion.cpu
+pidstat 1 3600 -G ^gateway_sk_msg$ > skmsg_gw.dummy.cpu & pidstat 1 3600 -G ^nf_sk_msg$ > skmsg_fn.dummy.cpu
 
 echo "CPU usage collection is done!"
