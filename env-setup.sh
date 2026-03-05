@@ -14,7 +14,7 @@ make -j $(nproc)
 make install
 echo "/usr/lib64/" | tee -a /etc/ld.so.conf
 ldconfig
-cd ../..
+cd /mydata && rm -rf libbpf # remove source and build tree since no longer needed
 
 echo "Installing DPDK"
 cd /mydata # Use the extended disk with enough space
@@ -27,7 +27,7 @@ cd build
 ninja
 ninja install
 ldconfig
-cd ../..
+cd /mydata && rm -rf dpdk # remove source and build tree since no longer needed
 
 echo "build SPRIGHT"
 cd /mydata # Use the extended disk with enough space

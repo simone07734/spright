@@ -20,22 +20,23 @@ echo "Configuring fds in tmux panes..."
 for j in {1..5}
 do
     tmux send-keys -t ${j} "cd /mydata/spright/" Enter
+    tmux send-keys -t ${j} "export BIN_PATH=/mydata/spright/bin/" Enter
     sleep 0.1
 done
 
 
 echo "Testing S-SPRIGHT with dummy network functions..."
-tmux send-keys -t 1 "sudo ./run.sh shm_mgr cfg/example.cfg" Enter
+tmux send-keys -t 1 "./run.sh shm_mgr cfg/example.cfg" Enter
 sleep 1
-tmux send-keys -t 2 "sudo ./run.sh gateway" Enter
+tmux send-keys -t 2 "./run.sh gateway" Enter
 sleep 10
-tmux send-keys -t 3 "sudo ./run.sh nf 1" Enter
+tmux send-keys -t 3 "./run.sh nf 1" Enter
 sleep 1
-tmux send-keys -t 4 "sudo ./run.sh nf 2" Enter
+tmux send-keys -t 4 "./run.sh nf 2" Enter
 sleep 1
-tmux send-keys -t 5 "sudo ./run.sh nf 3" Enter
+tmux send-keys -t 5 "./run.sh nf 3" Enter
 sleep 1
-tmux send-keys -t 6 "sudo ./run.sh nf 4" Enter
+tmux send-keys -t 6 "./run.sh nf 4" Enter
 
 sleep 0.1
 

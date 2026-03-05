@@ -2,6 +2,7 @@
 set -e
 
 export RTE_RING=1
+export BIN_PATH=/mydata/spright/bin/
 
 # automatically assign hostname and ip
 SERVICE_NAME=${SERVICE_NAME:-$(hostname)}

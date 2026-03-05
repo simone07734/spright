@@ -29,7 +29,8 @@ RUN apt-get update && \
     conntrack \
     iproute2 \
     gettext-base \
-    git
+    git \
+    tmux
 
 RUN pip3 install meson ninja
 
