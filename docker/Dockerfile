@@ -8,32 +8,47 @@ RUN DEBIAN_FRONTEND=noninteractive \
 # Install any necessary dependencies
 RUN apt-get update && \
     apt-get install -y \
+    flex \
+    bison \
     build-essential \
+    dwarves \
+    libssl-dev \
     libelf-dev \
     libpcap-dev \
     libnuma-dev \
-    libconfig-dev \
-    libbpf-dev \
-    libdpdk-dev \
-    conntrack \
-    uuid-dev \
-    dpdk-dev \
     pkg-config \
-    iproute2 \
-    gettext-base \
+    python3-pip \
+    python3-pyelftools \
+    libconfig-dev \
+    golang \
     clang \
     llvm \
-    make
+    gcc-multilib \
+    uuid-dev \
+    sysstat \
+    conntrack \
+    iproute2 \
+    gettext-base \
+    git
+
+RUN pip3 install meson ninja
 
 # Set up working directory for SPRIGHT
 WORKDIR /mydata/spright
 
 # Copy SPRIGHT source into container
-COPY . /mydata/spright
+COPY . /mydata/spright/
+
+RUN ls
+
+# run setup script to install libbpf, dpdk, setup hugepages, and build spright
+COPY env-setup.sh /mydata/spright
+RUN chmod +x /mydata/spright/env-setup.sh && \
+    /mydata/spright/env-setup.sh
 
 # Build SPRIGHT
-RUN make clean || true
-RUN make -j$(nproc)
+# RUN make clean || true
+# RUN make -j$(nproc)
 
 # Copy entrypoint (script that starts shm_mgr, gateway, and functions)
 COPY docker-entrypoint.sh /usr/local/bin/
