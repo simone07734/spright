@@ -1,1 +1,85 @@
-# model after sigcomm-experiment\expt-1-online-boutique\manifests
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spright-nf
+  labels:
+    app: spright-nf
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spright-nf
+  template:
+    metadata:
+      labels:
+        app: spright-nf
+    spec:
+      tolerations:
+        - key: "location"
+          operator: "Equal"
+          value: "slave"
+          effect: "NoSchedule"
+      containers:
+        - name: spright-nf
+          image: smn0000/spright_image:latest
+          imagePullPolicy: Always
+          securityContext:
+            privileged: true   # required: run.sh checks EUID==0; DPDK EAL needs raw access
+          env:
+            - name: RTE_RING
+              value: "1"
+            # Inject pod name and IP so envsubst can populate cfg/nf.cfg.template
+            - name: SERVICE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+          ports:
+            - name: gateway
+              containerPort: 8080
+              protocol: TCP
+            - name: rpc
+              containerPort: 8083
+              protocol: TCP
+          resources:
+            requests:
+              hugepages-2Mi: 32Gi   # 16384 x 2 MB pages; tune to match DPDK mempool size
+              memory: 32Gi
+              cpu: "4"
+            limits:
+              hugepages-2Mi: 32Gi
+              memory: 32Gi
+              cpu: "4"
+          volumeMounts:
+            - name: hugepages
+              mountPath: /dev/hugepages
+            - name: dpdk-run
+              mountPath: /var/run/dpdk
+      volumes:
+        - name: hugepages
+          emptyDir:
+            medium: HugePages      # K8s allocates from pre-configured node hugepages
+        - name: dpdk-run
+          hostPath:
+            path: /var/run/dpdk    # shared between shm_mgr (primary) and other DPDK processes
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: spright-nf
+spec:
+  selector:
+    app: spright-nf
+  ports:
+    - name: gateway
+      port: 8080
+      targetPort: 8080
+      protocol: TCP
+    - name: rpc
+      port: 8083
+      targetPort: 8083
+      protocol: TCP

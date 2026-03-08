@@ -17,7 +17,7 @@ do
 done
 
 echo "Configuring fds in tmux panes..."
-for j in {1..5}
+for j in {1..6}
 do
     tmux send-keys -t ${j} "cd /mydata/spright/" Enter
     tmux send-keys -t ${j} "export BIN_PATH=/mydata/spright/bin/" Enter
