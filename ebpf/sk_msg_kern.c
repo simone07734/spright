@@ -32,12 +32,20 @@ struct datarec {
     __u64 rx_packets;
 };
 
-struct bpf_map_def SEC("maps") skmsg_stats_map = {
-    .type        = BPF_MAP_TYPE_PERCPU_ARRAY,
-    .key_size    = sizeof(int),
-    .value_size  = sizeof(struct datarec),
-    .max_entries = MAX_FUNC,
-};
+// struct bpf_map_def SEC("maps") skmsg_stats_map = {
+//     .type        = BPF_MAP_TYPE_PERCPU_ARRAY,
+//     .key_size    = sizeof(int),
+//     .value_size  = sizeof(struct datarec),
+//     .max_entries = MAX_FUNC,
+// };
+
+struct {
+	__uint(type, BPF_MAP_TYPE_PERCPU_ARRAY);
+	__type(key, int);
+	__type(value, struct datarec);
+	__uint(max_entries, MAX_FUNC);
+	__uint(pinning, LIBBPF_PIN_BY_NAME); // the important line! this makes the map visible to stuff that’s not spright!)
+} skmsg_stats_map SEC(“.maps”);
 
 struct bpf_map_def SEC("maps") sock_map = {
     .type = BPF_MAP_TYPE_SOCKMAP,
