@@ -1,8 +1,10 @@
 #!/bin/bash
 set -e
 
-export RTE_RING=1
+export RTE_RING=0
 export BIN_PATH=/mydata/spright/bin/
+
+ulimit -l unlimited
 
 # automatically assign hostname and ip
 SERVICE_NAME=${SERVICE_NAME:-$(hostname)}

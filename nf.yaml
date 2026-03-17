@@ -12,6 +12,8 @@ spec:
       app: spright-nf
   template:
     metadata:
+      annotations:
+        container.apparmor.security.beta.kubernetes.io/spright-nf: unconfined
       labels:
         app: spright-nf
     spec:
@@ -28,7 +30,7 @@ spec:
             privileged: true   # required: run.sh checks EUID==0; DPDK EAL needs raw access
           env:
             - name: RTE_RING
-              value: "1"
+              value: "0"
             # Inject pod name and IP so envsubst can populate cfg/nf.cfg.template
             - name: SERVICE_NAME
               valueFrom:
@@ -59,6 +61,8 @@ spec:
               mountPath: /dev/hugepages
             - name: dpdk-run
               mountPath: /var/run/dpdk
+            - name: bpffs
+              mountPath: /sys/fs/bpf
       volumes:
         - name: hugepages
           emptyDir:
@@ -66,6 +70,9 @@ spec:
         - name: dpdk-run
           hostPath:
             path: /var/run/dpdk    # shared between shm_mgr (primary) and other DPDK processes
+        - name: bpffs
+          hostPath:
+            path: /sys/fs/bpf      # exposes pinned eBPF maps (e.g. skmsg_stats_map) on the host
 ---
 apiVersion: v1
 kind: Service
