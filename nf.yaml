@@ -51,12 +51,12 @@ spec:
               protocol: TCP
           resources:
             requests:
-              hugepages-2Mi: 32Gi   # 16384 x 2 MB pages; tune to match DPDK mempool size
-              memory: 32Gi
+              hugepages-2Mi: 8Gi   # 16384 x 2 MB pages; tune to match DPDK mempool size
+              memory: 2Gi
               cpu: "4"
             limits:
-              hugepages-2Mi: 32Gi
-              memory: 32Gi
+              hugepages-2Mi: 8Gi
+              memory: 2Gi
               cpu: "4"
           volumeMounts:
             - name: hugepages

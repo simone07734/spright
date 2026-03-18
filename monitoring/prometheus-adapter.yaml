@@ -125,9 +125,8 @@ spec:
       - name: prometheus-adapter
         image: registry.k8s.io/prometheus-adapter/prometheus-adapter:v0.12.0
         args:
-          - --cert-dir=/var/run/serving-cert
+          - --cert-dir=/tmp/serving-cert
           - --config=/etc/adapter/config.yaml
-          - --logtostderr=true
           - --metrics-relist-interval=1m
           - --prometheus-url=http://prometheus.monitoring.svc:9090/
           - --secure-port=6443
@@ -144,16 +143,14 @@ spec:
         - name: config-volume
           mountPath: /etc/adapter
           readOnly: true
-        - name: tls
-          mountPath: /var/run/serving-cert
-          readOnly: true
+        - name: tmp-cert
+          mountPath: /tmp/serving-cert
       volumes:
       - name: config-volume
         configMap:
           name: prometheus-adapter-config
-      - name: tls
-        secret:
-          secretName: prometheus-adapter-tls
+      - name: tmp-cert
+        emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
