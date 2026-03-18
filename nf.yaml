@@ -13,6 +13,9 @@ spec:
     metadata:
       annotations:
         container.apparmor.security.beta.kubernetes.io/spright-nf: unconfined
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "5000"
+        prometheus.io/path: "/metrics"
       labels:
         app: spright-nf
     spec:
