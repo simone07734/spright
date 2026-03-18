@@ -13,7 +13,7 @@ app = Flask(__name__)
 app.config.from_object(Config())
 
 file_name = '/sys/fs/bpf/skmsg_stats_map'
-last_total = 0 # total every iteration of the read_metrics job
+last_total = None  # None until first read; initialized to current BPF map value to avoid startup spike
 
 # prometheus metric (counter), just increments.
 REQUEST_COUNT = Counter(
@@ -58,6 +58,8 @@ def read_metrics():
         for cpu in cpus:
             rx_sum += cpus[cpu]
 
+    if last_total is None:
+        last_total = rx_sum  # use current value, not historical accumulation
     print("new requests: " + str(rx_sum - last_total))
     REQUEST_COUNT.inc(rx_sum - last_total) # increment prometheus counter
     last_total = rx_sum
