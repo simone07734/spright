@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: skmsg-metrics-deployment
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: skmsg-metrics
+    template:
+        metadata:
+            labels:
+                app: skmsg-metrics
+        spec:
+            containers:
+            - name: skmsg-metrics-agent-container
+              image: gshammer/skmsg_metrics_agent:latest # pulled from my repository
+              securityContext:
+                privileged: true
+              ports:
+              - name: metrics
+                containerPort: 5000
+              volumeMounts:
+              - name: ebpf-volume
+                mountPath: /etc/bpf-data
+                readOnly: true
