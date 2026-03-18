@@ -24,3 +24,8 @@ spec:
               - name: ebpf-volume
                 mountPath: /etc/bpf-data
                 readOnly: true
+            volumes:
+            - name: ebpf-volume
+              hostPath:
+                path: /sys/fs/bpf
+                type: Directory
