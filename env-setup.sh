@@ -22,7 +22,7 @@ cd /mydata # Use the extended disk with enough space
 git clone --single-branch git://dpdk.org/dpdk
 cd dpdk
 git switch --detach v21.11
-meson build
+meson build -Dmachine=generic
 cd build
 ninja
 ninja install
