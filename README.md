@@ -7,7 +7,7 @@ For more information, please refer to:
 
 ## Procedure for starting with Kubernetes HPA
 
-We added the ability to run SPRIGHT with Kubernetes HPA. Here is an outline of our procedure to start it.
+We (Simone and Garett) added the ability to run SPRIGHT with Kubernetes HPA on this fork. Here is an outline of our procedure to start it.
 
 #### Automatic Run in Container in Pod
 1. docs 01, 02 from sigcomm-experiment/env-setup
