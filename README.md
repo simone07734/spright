@@ -5,6 +5,63 @@ SPRIGHT is a lightweight, high-performance serverless framework that exploits sh
 For more information, please refer to:
 - SIGCOMM 2022: [SPRIGHT: Extracting the Server from Serverless Computing! High-performance eBPF-based Event-driven, Shared-memory Processing](https://dl.acm.org/doi/abs/10.1145/3544216.3544259)
 
+## Procedure for starting with Kubernetes HPA
+
+We added the ability to run SPRIGHT with Kubernetes HPA. Here is an outline of our procedure to start it.
+
+#### Automatic Run in Container in Pod
+1. docs 01, 02 from sigcomm-experiment/env-setup
+2. sudo sysctl -w vm.nr_hugepages=16384 on worker nodes
+    
+    kubectl describe node <node name> | grep hugepages. Should show: hugepages-2Mi: 32Gi
+3. docs 03 kubernetes startup. Also install conntrack in both nodes after docker install script.
+4. worker node join
+5. Run "kubectl apply -f nf.yaml"
+
+#### Setup Metrics Server
+1. sudo vim /etc/kubernetes/manifests/kube-apiserver.yaml and add to the “command:” list
+2. “- --enable-aggregator-routing=True” (no spaces)
+3. apply the metrics-server-ha.yaml file
+4. use the commands in the link to check that the server works
+https://computingforgeeks.com/how-to-deploy-metrics-server-to-kubernetes-cluster/
+
+#### Set up ebpf agent
+1. kubectl apply the deployment (skmsg-metrics.yaml) and then the service (skmsg-metrics-service.yaml)
+
+    Use curl http://<POD_IP>:5001/metrics to view results
+
+#### Prometheus and HPA
+Deploy Prometheus:
+
+1. kubectl apply -f monitoring/prometheus.yaml
+2. Generate TLS cert and create the adapter Secret:
+```
+openssl req -x509 -newkey rsa:2048 -keyout /tmp/adapter.key \
+  -out /tmp/adapter.crt -days 365 -nodes \
+  -subj "/CN=prometheus-adapter.monitoring.svc"
+kubectl create secret tls prometheus-adapter-tls --cert=/tmp/adapter.crt --key=/tmp/adapter.key -n monitoring
+```
+
+Deploy Prometheus Adapter + register the API:
+```
+kubectl apply -f monitoring/prometheus-adapter.yaml
+kubectl apply -f monitoring/custom-metrics-apiservice.yaml
+Update spright-nf and create HPA:
+kubectl apply -f nf.yaml
+kubectl apply -f monitoring/hpa.yaml
+```
+
+*View hpa:* kubectl get hpa spright-nf-hpa -w
+
+
+#### Between runs:
+1. delete stale pods
+2. on worker: rm -rf /var/run/dpdk/spright
+3. restart pod: kubectl rollout restart deployment/spright-nf
+4. get rid of stale ebpf pins: rm /sys/fs/bpf/skmsg_*
+5. kubectl rollout restart deployment/spright-nf
+
+
 ## Installation guideline (on Cloudlab) ##
 
 This guideline is mainly for deploying SPRIGHT on [NSF Cloudlab](https://www.cloudlab.us/). We focus on a single-node deployment to demonstrate the shared memory processing supported by SPRIGHT. Currently SPRIGHT offers several deployment options: Process-on-bare-metal (POBM mode), Kubernetes pod (K8S mode), and Knative functions (Kn mode).
